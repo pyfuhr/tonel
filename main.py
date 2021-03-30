@@ -29,7 +29,7 @@ def main():
     return json.dumps(response)
 
 @app.route('/')
-def app():
+def appp():
     return 'Work'
 
 
