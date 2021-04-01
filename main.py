@@ -57,16 +57,22 @@ def handle_dialog(req, res):
         res['response']['buttons'] = get_suggests_rabbit(user_id)
 
     if not (user_id in rabbit):
+        logging.info('111')
         for i in ['ладно', 'куплю', 'покупаю', 'хорошо']:
             if i in req['request']['original_utterance'].lower():
                 res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
                 rabbit.append(user_id)
                 logging.info('User ID: ' + srt(user_id))
     else:
+        logging.info('000')
         for i in ['ладно', 'куплю', 'покупаю', 'хорошо']:
             if i in req['request']['original_utterance'].lower():
                 res['response']['text'] = 'Кролика можно найти на Яндекс.Маркете!'
                 res['response']['end_session'] = True
+                try:
+                    del rabbit.index(user_id)
+                except:
+                    pass
                 
     if not (user_id in rabbit):
         res['response']['text'] = 'Все говорят "%s", а ты купи слона!' % (
