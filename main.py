@@ -35,6 +35,9 @@ def appp():
 
 
 def handle_dialog(req, res):
+    
+    global rabbit
+    
     user_id = req['session']['user_id']
 
     if req['session']['new']:
@@ -58,6 +61,7 @@ def handle_dialog(req, res):
             if i in req['request']['original_utterance'].lower():
                 res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
                 rabbit.append(user_id)
+                logging.info('User ID: ' + srt(user_id))
     else:
         for i in ['ладно', 'куплю', 'покупаю', 'хорошо']:
             if i in req['request']['original_utterance'].lower():
