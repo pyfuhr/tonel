@@ -70,7 +70,7 @@ def handle_dialog(req, res):
                 res['response']['text'] = 'Кролика можно найти на Яндекс.Маркете!'
                 res['response']['end_session'] = True
                 try:
-                    del rabbit.index(user_id)
+                    del rabbit[rabbit.index(user_id)]
                 except:
                     pass
                 
