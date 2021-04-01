@@ -2,12 +2,12 @@ from flask import Flask, request
 import logging
 import json, os
 
-
 app = Flask(__name__)
 
 logging.basicConfig(level=logging.INFO)
 
 sessionStorage = {}
+rabbit = []
 
 
 @app.route('/post', methods=['POST'])
@@ -28,6 +28,7 @@ def main():
 
     return json.dumps(response)
 
+
 @app.route('/')
 def appp():
     return 'Work'
@@ -37,7 +38,6 @@ def handle_dialog(req, res):
     user_id = req['session']['user_id']
 
     if req['session']['new']:
-
         sessionStorage[user_id] = {
             'suggests': [
                 "Не хочу.",
@@ -45,23 +45,59 @@ def handle_dialog(req, res):
                 "Отстань!",
             ]
         }
+    if not (user_id in rabbit):
         res['response']['text'] = 'Привет! Купи слона!'
         res['response']['buttons'] = get_suggests(user_id)
         return
+    else:
+        res['response']['text'] = 'Привет! Купи кролика!'
+        res['response']['buttons'] = get_suggests_rabbit(user_id)
 
-    for i in ['ладно', 'куплю', 'покупаю', 'хорошо']:
-        if i in req['request']['original_utterance'].lower():
-            res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
-            res['response']['end_session'] = True
-            return
-
-    res['response']['text'] = 'Все говорят "%s", а ты купи слона!' % (
-        req['request']['original_utterance']
-    )
-    res['response']['buttons'] = get_suggests(user_id)
+    if not (user_id in rabbit):
+        for i in ['ладно', 'куплю', 'покупаю', 'хорошо']:
+            if i in req['request']['original_utterance'].lower():
+                res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
+                rabbit.append(user_id)
+    else:
+        for i in ['ладно', 'куплю', 'покупаю', 'хорошо']:
+            if i in req['request']['original_utterance'].lower():
+                res['response']['text'] = 'Кролика можно найти на Яндекс.Маркете!'
+                res['response']['end_session'] = True
+                
+    if not (user_id in rabbit):
+        res['response']['text'] = 'Все говорят "%s", а ты купи слона!' % (
+            req['request']['original_utterance']
+        )
+        res['response']['buttons'] = get_suggests(user_id)
+    else:
+        res['response']['text'] = 'Все говорят "%s", а ты купи кролика!' % (
+            req['request']['original_utterance']
+        )
+        res['response']['buttons'] = get_suggests_rabbit(user_id)
 
 
 def get_suggests(user_id):
+    session = sessionStorage[user_id]
+
+    suggests = [
+        {'title': suggest, 'hide': True}
+        for suggest in session['suggests'][:2]
+    ]
+
+    session['suggests'] = session['suggests'][1:]
+    sessionStorage[user_id] = session
+
+    if len(suggests) < 2:
+        suggests.append({
+            "title": "Ладно",
+            "url": "https://market.yandex.ru/search?text=слон",
+            "hide": True
+        })
+
+    return suggests
+
+
+def get_suggests_rabbit(user_id):
     session = sessionStorage[user_id]
 
     suggests = [
