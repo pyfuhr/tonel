@@ -92,7 +92,7 @@ def handle_dialog(res, req):
             elif 'нет' in req['request']['nlu']['tokens']:
                 res['response']['text'] = 'Ну и ладно!'
                 res['response']['end_session'] = True
-            elif 'я дурачок' in req['request']['nlu']['tokens']:
+            elif 'я дурачок' in req['request']['command']:
                 res['response']['card'] = {}
                 res['response']['card']['type'] = 'BigImage'
                 res['response']['card']['title'] = 'Разработка - Германская Аэрокосмическая Корпорация Чебуреков и Беляшей'
