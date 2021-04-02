@@ -2,7 +2,7 @@ import requests
 from math import sin, cos, sqrt, atan2, radians
 
 
-def get_geo_info(city_name, type_info):
+def get_geo_info(city, type_info):
     url = "https://geocode-maps.yandex.ru/1.x/"
 
     params = {
@@ -13,12 +13,12 @@ def get_geo_info(city_name, type_info):
 
     response = requests.get(url, params)
     json = response.json()
-    
+
     if type_info == 'country':
         return \
-        json['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty'][
-            'GeocoderMetaData'][
-            'AddressDetails']['Country']['CountryName']
+            json['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty'][
+                'GeocoderMetaData'][
+                'AddressDetails']['Country']['CountryName']
 
     elif type_info == 'coordinates':
         point_str = json['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']
