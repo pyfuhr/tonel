@@ -1,7 +1,6 @@
 from flask import Flask, request
 import logging
 import json
-import os
 import random
 
 app = Flask(__name__)
@@ -60,7 +59,7 @@ def handle_dialog(res, req):
                     'hide': True
                 },
                 {
-                    'title': 'Нет',
+                    'title': 'Конечно',
                     'hide': True
                 }
             ]
@@ -70,7 +69,7 @@ def handle_dialog(res, req):
         # начал пользователь игру или нет.
         if not sessionStorage[user_id]['game_started']:
             # игра не начата, значит мы ожидаем ответ на предложение сыграть.
-            if 'да' in req['request']['nlu']['tokens']:
+            if 'да' in req['request']['nlu']['tokens'] or 'конечно' in req['request']['nlu']['tokens']:
                 # если пользователь согласен, то проверяем не отгадал ли он уже все города.
                 # По схеме можно увидеть, что здесь окажутся и пользователи, которые уже отгадывали города
                 if len(sessionStorage[user_id]['guessed_cities']) == 3:
@@ -95,7 +94,7 @@ def handle_dialog(res, req):
                         'hide': True
                     },
                     {
-                        'title': 'Нет',
+                        'title': 'Конечно',
                         'hide': True
                     }
                 ]
@@ -128,6 +127,16 @@ def play_game(res, req):
             # если да, то добавляем город к sessionStorage[user_id]['guessed_cities'] и
             # отправляем пользователя на второй круг. Обратите внимание на этот шаг на схеме.
             res['response']['text'] = 'Правильно! Сыграем ещё?'
+            res['response']['buttons'] = [
+                {
+                    'title': 'Да',
+                    'hide': True
+                },
+                {
+                    'title': 'Конечно',
+                    'hide': True
+                }
+            ]
             sessionStorage[user_id]['guessed_cities'].append(city)
             sessionStorage[user_id]['game_started'] = False
             return
