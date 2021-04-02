@@ -62,7 +62,12 @@ def handle_dialog(res, req):
                 {
                     'title': 'Конечно',
                     'hide': True
+                },
+                {
+                    'title': 'Я дурачок',
+                    'hide': True
                 }
+
             ]
     else:
         # У нас уже есть имя, и теперь мы ожидаем ответ на предложение сыграть.
@@ -73,7 +78,7 @@ def handle_dialog(res, req):
             if 'да' in req['request']['nlu']['tokens'] or 'конечно' in req['request']['nlu']['tokens']:
                 # если пользователь согласен, то проверяем не отгадал ли он уже все города.
                 # По схеме можно увидеть, что здесь окажутся и пользователи, которые уже отгадывали города
-                if len(sessionStorage[user_id]['guessed_cities']) == 4:
+                if len(sessionStorage[user_id]['guessed_cities']) == 3:
                     # если все три города отгаданы, то заканчиваем игру
                     res['response']['text'] = 'Ты отгадал все города!'
                     res['response']['end_session'] = True
@@ -87,6 +92,12 @@ def handle_dialog(res, req):
             elif 'нет' in req['request']['nlu']['tokens']:
                 res['response']['text'] = 'Ну и ладно!'
                 res['response']['end_session'] = True
+            elif 'я дурачок' in req['request']['nlu']['tokens']:
+                res['response']['card'] = {}
+                res['response']['card']['type'] = 'BigImage'
+                res['response']['card']['title'] = 'Разработка - Германская Аэрокосмическая Корпорация Чебуреков и Беляшей'
+                res['response']['text'] = 'Разработка - Германская Аэрокосмическая Корпорация Чебуреков и Беляшей'
+                res['response']['card']['image_id'] = '213044/e1d082314a32d820df6d'
             else:
                 res['response']['text'] = 'Не поняла ответа! Так да или нет?'
                 res['response']['buttons'] = [
@@ -96,6 +107,10 @@ def handle_dialog(res, req):
                     },
                     {
                         'title': 'Конечно',
+                        'hide': True
+                    },
+                    {
+                        'title': 'Я дурачок',
                         'hide': True
                     }
                 ]
@@ -135,6 +150,10 @@ def play_game(res, req):
                 },
                 {
                     'title': 'Конечно',
+                    'hide': True
+                },
+                {
+                    'title': 'Я дурачок',
                     'hide': True
                 }
             ]
